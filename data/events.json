@@ -1,0 +1,30 @@
+
+[
+    {
+        "id": "ev-1",
+        "name": "Intro to Artificial Intelligence",
+        "date": "2 December 2026",
+        "time": "10:00 AM",
+        "venue": "Seminar Hall A",
+        "capacity": 60,
+        "description": "Learn about Artificial Intelligence and its applications."
+    },
+    {
+        "id": "ev-2",
+        "name": "Web Development Workshop",
+        "date": "4 December 2026",
+        "time": "2:00 PM",
+        "venue": "Computer Lab 2",
+        "capacity": 30,
+        "description": "Learn HTML, CSS and JavaScript."
+    },
+    {
+        "id": "ev-3",
+        "name": "Hackathon 2026",
+        "date": "12 December 2026",
+        "time": "9:00 AM",
+        "venue": "Main Auditorium",
+        "capacity": 40,
+        "description": "Participate in a team coding challenge."
+    }
+]

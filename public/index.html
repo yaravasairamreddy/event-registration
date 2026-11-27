@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>College Event Registration</title>
+  <!--
+    COLLEGE EVENT REGISTRATION - HTML and CSS only
+    HOW TO RUN: double-click this file, or open it in any web browser.
+    There is no JavaScript and no server, so registrations cannot be saved, edited or removed.
+    Each page is a section. The part of the web address after # decides which page shows.
+  -->
+  <style>
+    /* ---------- Colours, basics and layout ---------- */
+    :root {
+      --primary: #2357d6;
+      --primary-dark: #1a44a8;
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --text: #1d2433;
+      --muted: #5b6478;
+      --border: #d9deea;
+      --error: #b42318;
+      --success: #15723c;
+      --success-bg: #e8f6ee;
+      --note-bg: #fff8e6;
+      --note-text: #6b4e00;
+      --radius: 10px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+    main { flex: 1; width: 100%; max-width: 1080px; margin: 0 auto; padding: 0 16px; }
+    h1 { font-size: 1.6rem; margin: 24px 0 6px; }
+    h2 { font-size: 1.2rem; margin: 0 0 6px; }
+    p { margin: 6px 0 16px; }
+    .muted { color: var(--muted); }
+
+    /* ---------- Header and menu ---------- */
+    header { background: var(--primary); color: #fff; position: sticky; top: 0; z-index: 10; }
+    .header-row {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .brand { color: #fff; font-weight: 700; font-size: 1.15rem; text-decoration: none; }
+    nav { display: flex; gap: 4px; flex-wrap: wrap; }
+    nav a { color: #fff; text-decoration: none; padding: 6px 12px; border-radius: 999px; }
+    nav a:hover { background: rgba(255, 255, 255, 0.15); }
+
+    /* Highlight the menu link of the page being shown */
+    body:not(:has(.view:target)) nav a[href="#events"],
+    body:has(#events:target) nav a[href="#events"],
+    body:has(#register:target) nav a[href="#register"],
+    body:has(#confirmation:target) nav a[href="#register"],
+    body:has(#registrations:target) nav a[href="#registrations"] {
+      background: #fff;
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    /* ---------- Pages: only one shows at a time ---------- */
+    .view { display: none; padding-bottom: 32px; scroll-margin-top: 7rem; } /* keeps the heading below the sticky header */
+    .view:target,
+    body:not(:has(.view:target)) #events { display: block; }
+
+    /* ---------- Event cards ---------- */
+    .event-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: 0 1px 3px rgba(16, 24, 40, 0.08);
+    }
+    .event-card { display: flex; flex-direction: column; gap: 8px; }
+    .event-card p { margin: 0; }
+    .event-card .meta { color: var(--muted); font-size: 0.92rem; }
+    .event-card .desc { flex: 1; }
+
+    /* ---------- Buttons ---------- */
+    .button {
+      display: inline-block;
+      align-self: flex-start;
+      background: var(--primary);
+      color: #fff;
+      text-decoration: none;
+      border: 0;
+      border-radius: 8px;
+      padding: 9px 16px;
+      font: inherit;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .button:hover { background: var(--primary-dark); }
+
+    /* ---------- Registration form ---------- */
+    form {
+      max-width: 760px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px 18px;
+    }
+    .field { display: flex; flex-direction: column; gap: 4px; }
+    .field.full { grid-column: 1 / -1; }
+    label { font-weight: 600; font-size: 0.92rem; }
+    input, select {
+      font: inherit;
+      width: 100%;
+      padding: 9px 10px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--text);
+    }
+    input:focus, select:focus { outline: 2px solid #9db8f5; outline-offset: 1px; }
+    input:user-invalid, select:user-invalid { border-color: var(--error); }
+    .hint { color: var(--muted); font-size: 0.85rem; }
+    .form-actions { margin-top: 18px; }
+
+    /* ---------- Messages ---------- */
+    .notice { padding: 10px 14px; border-radius: 8px; background: var(--success-bg); color: var(--success); }
+    .note { padding: 10px 14px; border-radius: 8px; background: var(--note-bg); color: var(--note-text); }
+
+    /* ---------- Registrations table ---------- */
+    .table-wrap {
+      overflow-x: auto;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+    th, td {
+      text-align: left;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    th { background: #f0f3fa; white-space: nowrap; }
+
+    /* ---------- Footer ---------- */
+    footer {
+      background: #fff;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.88rem;
+      text-align: center;
+      padding: 16px;
+    }
+
+    /* ---------- Phones ---------- */
+    @media (max-width: 640px) {
+      .form-grid { grid-template-columns: 1fr; }
+      h1 { font-size: 1.35rem; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-row">
+      <a class="brand" href="#events">College Events</a>
+      <nav aria-label="Main menu">
+        <a href="#events">Events</a>
+        <a href="#register">Register</a>
+        <a href="#registrations">Registrations</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- Page 1: the events -->
+    <section id="events" class="view" aria-labelledby="events-heading">
+      <h1 id="events-heading">Upcoming events</h1>
+      <p class="muted">Choose an event and register with your student details.</p>
+      <div class="event-grid">
+        <article class="card event-card">
+          <h2>Intro to Artificial Intelligence</h2>
+          <p class="meta">When: Wed, 2 Dec 2026, 10:00 AM<br>Where: Seminar Hall A</p>
+          <p class="desc">A beginner-friendly tour of what AI is and where it is used today.</p>
+          <p class="meta">Capacity: 60 seats</p>
+          <a class="button" href="#register">Register</a>
+        </article>
+        <article class="card event-card">
+          <h2>Web Development Workshop</h2>
+          <p class="meta">When: Fri, 4 Dec 2026, 2:00 PM<br>Where: Computer Lab 2</p>
+          <p class="desc">Build your first responsive page with HTML, CSS and JavaScript.</p>
+          <p class="meta">Capacity: 30 seats</p>
+          <a class="button" href="#register">Register</a>
+        </article>
+        <article class="card event-card">
+          <h2>Hackathon 2026</h2>
+          <p class="meta">When: Sat, 12 Dec 2026, 9:00 AM<br>Where: Main Auditorium</p>
+          <p class="desc">A 12-hour team coding challenge. Teams can have up to four students.</p>
+          <p class="meta">Capacity: 40 seats</p>
+          <a class="button" href="#register">Register</a>
+        </article>
+      </div>
+    </section>
+
+    <!-- Page 2: the registration form. The browser checks each field before the form is sent. -->
+    <!-- With no server, the details travel in the web address, so they can be checked but not saved. -->
+    <section id="register" class="view" aria-labelledby="register-heading">
+      <h1 id="register-heading">Register for an event</h1>
+      <p class="muted">Fields marked * are required.</p>
+      <form action="#confirmation" method="get">
+        <div class="form-grid">
+          <div class="field">
+            <label for="name">Full name *</label>
+            <input id="name" name="name" type="text" required minlength="2" maxlength="60" autocomplete="name">
+          </div>
+
+          <div class="field">
+            <label for="roll">Roll number *</label>
+            <input id="roll" name="roll" type="text" required maxlength="20"
+                   pattern="[A-Za-z0-9\-]{3,20}" title="3 to 20 letters, digits or hyphens"
+                   placeholder="e.g. 23AIML045">
+            <span class="hint">3 to 20 letters, digits or hyphens.</span>
+          </div>
+
+          <div class="field">
+            <label for="email">Email *</label>
+            <input id="email" name="email" type="email" required autocomplete="email">
+          </div>
+
+          <div class="field">
+            <label for="phone">Phone number *</label>
+            <input id="phone" name="phone" type="tel" required autocomplete="tel"
+                   pattern="[0-9]{10}" title="Enter exactly 10 digits">
+            <span class="hint">Exactly 10 digits, no spaces.</span>
+          </div>
+
+          <div class="field">
+            <label for="department">Department *</label>
+            <select id="department" name="department" required>
+              <option value="" selected disabled>Choose a department</option>
+              <option>AIML</option>
+              <option>CSE</option>
+              <option>ECE</option>
+              <option>EEE</option>
+              <option>MECH</option>
+              <option>CIVIL</option>
+              <option>IT</option>
+              <option>Other</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="year">Year of study *</label>
+            <select id="year" name="year" required>
+              <option value="" selected disabled>Choose a year</option>
+              <option>1</option>
+              <option>2</option>
+              <option>3</option>
+              <option>4</option>
+            </select>
+          </div>
+
+          <div class="field full">
+            <label for="event">Event *</label>
+            <select id="event" name="event" required>
+              <option value="" selected disabled>Choose an event</option>
+              <option value="ev-1">Intro to Artificial Intelligence (2 Dec)</option>
+              <option value="ev-2">Web Development Workshop (4 Dec)</option>
+              <option value="ev-3">Hackathon 2026 (12 Dec)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button class="button" type="submit">Register</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Page 3: shown after the form passes every check -->
+    <section id="confirmation" class="view" aria-labelledby="confirm-heading">
+      <h1 id="confirm-heading">Thank you!</h1>
+      <p class="notice">Your details passed every check on the form.</p>
+      <p class="note">This HTML and CSS version cannot save registrations. Saving needs JavaScript and a server,
+        which the event-registration.js version provides.</p>
+      <p><a class="button" href="#register">Register another student</a></p>
+    </section>
+
+    <!-- Page 4: sample rows only. HTML and CSS cannot store or change data. -->
+    <section id="registrations" class="view" aria-labelledby="registrations-heading">
+      <h1 id="registrations-heading">Registrations</h1>
+      <p class="note">Sample rows only. HTML and CSS cannot save, edit or remove registrations.</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Roll no.</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>Dept</th>
+              <th>Year</th>
+              <th>Event</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Asha Rao</td><td>23AIML045</td><td>asha@example.com</td><td>9876543210</td>
+              <td>AIML</td><td>2</td><td>Web Development Workshop</td>
+            </tr>
+            <tr>
+              <td>Ravi Kumar</td><td>23CSE010</td><td>ravi@example.com</td><td>9000000001</td>
+              <td>CSE</td><td>1</td><td>Intro to Artificial Intelligence</td>
+            </tr>
+            <tr>
+              <td>Meena Iyer</td><td>23ECE032</td><td>meena@example.com</td><td>9988776655</td>
+              <td>ECE</td><td>3</td><td>Hackathon 2026</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <footer>College Event Registration System</footer>
+</body>
+</html>

@@ -1,0 +1,39 @@
+
+[
+    {
+        "id": "1001",
+        "name": "Asha Rao",
+        "roll": "23AIML045",
+        "email": "asha@example.com",
+        "phone": "9876543210",
+        "department": "AIML",
+        "year": "2",
+        "eventId": "ev-2",
+        "eventName": "Web Development Workshop",
+        "registeredAt": "2026-11-27T08:00:00.000Z"
+    },
+    {
+        "id": "1002",
+        "name": "Ravi Kumar",
+        "roll": "23CSE010",
+        "email": "ravi@example.com",
+        "phone": "9000000001",
+        "department": "CSE",
+        "year": "1",
+        "eventId": "ev-1",
+        "eventName": "Intro to Artificial Intelligence",
+        "registeredAt": "2026-11-27T08:30:00.000Z"
+    },
+    {
+        "id": "1003",
+        "name": "Meena Iyer",
+        "roll": "23ECE032",
+        "email": "meena@example.com",
+        "phone": "9988776655",
+        "department": "ECE",
+        "year": "3",
+        "eventId": "ev-3",
+        "eventName": "Hackathon 2026",
+        "registeredAt": "2026-11-27T09:00:00.000Z"
+    }
+]
